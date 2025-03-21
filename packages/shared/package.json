@@ -1,0 +1,21 @@
+{
+  "name": "@loaprice/shared",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "lint": "eslint \"src/**/*.ts\" --fix",
+    "prebuild": "npm run lint",
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "main": "dist/index.js",
+  "devDependencies": {
+    "@loaprice/eslint-config": "workspace:*",
+    "@loaprice/typescript-config": "workspace:*",
+    "prettier": "^3.2.5",
+    "typescript": "5.5.4"
+  },
+  "dependencies": {
+    "winston": "^3.17.0"
+  }
+}

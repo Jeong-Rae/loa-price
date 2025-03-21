@@ -1,0 +1,3 @@
+{
+  "extends": "@loaprice/typescript-config/base.json"
+}
