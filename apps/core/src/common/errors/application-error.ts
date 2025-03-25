@@ -1,20 +1,20 @@
 import { ErrorCode } from './error-code';
 
-export type ApplicationError = {
-    code: string;
-    httpStatus: number;
-    message: string;
-    detail?: unknown;
-};
+export class ApplicationError extends Error {
+    constructor(
+        public readonly code: string,
+        public readonly httpStatus: number,
+        public readonly detail?: unknown,
+    ) {
+        super(code);
+        this.name = 'ApplicationError';
+    }
 
-export function ApplicationErrorFactory(
-    { code, httpStatus, message }: ErrorCode,
-    detail?: unknown,
-): ApplicationError {
-    return {
-        code,
-        httpStatus,
-        message,
-        detail,
-    };
+    static of(errorCode: ErrorCode, detail?: unknown): ApplicationError {
+        return new ApplicationError(errorCode.code, errorCode.httpStatus, detail);
+    }
+
+    static is(e: unknown): e is ApplicationError {
+        return e instanceof ApplicationError;
+    }
 }
