@@ -1,4 +1,8 @@
-import { ErrorCode } from './error-code';
+type HttpMappableErrorCode = {
+    code: string;
+    httpStatus: number;
+    message: string;
+};
 
 export class ApplicationError extends Error {
     constructor(
@@ -10,7 +14,7 @@ export class ApplicationError extends Error {
         this.name = 'ApplicationError';
     }
 
-    static of(errorCode: ErrorCode, detail?: unknown): ApplicationError {
+    static of<T extends HttpMappableErrorCode>(errorCode: T, detail?: unknown): ApplicationError {
         return new ApplicationError(errorCode.code, errorCode.httpStatus, detail);
     }
 

@@ -1,3 +1,5 @@
+import { ApplicationError } from "../errors/application-error";
+
 export class ControllerResponse<T> {
     constructor(
         public readonly statusCode: number,
@@ -8,7 +10,15 @@ export class ControllerResponse<T> {
         return new ControllerResponse(200, body);
     }
 
-    static error<T>(statusCode: number, body: T): ControllerResponse<T> {
-        return new ControllerResponse(statusCode, body);
+    static error(error: ApplicationError): ControllerResponse<{
+        errorCode: string;
+        message: string;
+        detail?: unknown;
+    }> {
+        return new ControllerResponse(error.httpStatus, {
+            errorCode: error.code,
+            message: error.message,
+            detail: error.detail,
+        });
     }
 }

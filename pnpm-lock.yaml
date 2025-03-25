@@ -41,6 +41,9 @@ importers:
       cheerio:
         specifier: ^1.0.0
         version: 1.0.0
+      es-toolkit:
+        specifier: ^1.33.0
+        version: 1.33.0
       fp-ts:
         specifier: ^2.16.9
         version: 2.16.9
@@ -3318,6 +3321,10 @@ packages:
       is-date-object: 1.1.0
       is-symbol: 1.1.1
     dev: true
+
+  /es-toolkit@1.33.0:
+    resolution: {integrity: sha512-X13Q/ZSc+vsO1q600bvNK4bxgXMkHcf//RxCmYDaRY5DAcT+eoXjY5hoAPGMdRnWQjvyLEcyauG3b6hz76LNqg==}
+    dev: false
 
   /escalade@3.2.0:
     resolution: {integrity: sha512-WUj2qlxaQtO4g6Pq5c29GTcWGDyd8itL8zTlipgECz3JesAiiOKotd8JU6otB3PACgG6xkJUyVhboMS+bje/jA==}
