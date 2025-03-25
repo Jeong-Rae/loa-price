@@ -1,29 +1,41 @@
-import { Controller, NotFoundException, Param, Post } from '@nestjs/common';
+import { Controller, Param, Post } from '@nestjs/common';
 import { CrawlerService } from './crawler.service';
-import { SiteRegistryService } from "./registry/site-registry.service";
+import { SiteRegistryService } from './registry/site-registry.service';
+import { defer, from, iif, map, mergeMap, Observable, of } from 'rxjs';
+import { ControllerResponse } from '../common/response/controller-response';
+import { CRAWL_ERROR_CODE } from './error/crawl-error-code';
+import { ApplicationError } from '../common/errors/application-error';
+import { isNil } from 'es-toolkit';
+import { ErrorBody } from '../common/response/error-body';
 
 @Controller('crawler')
 export class CrawlerController {
     constructor(
         private readonly crawlerService: CrawlerService,
-        private readonly siteRegistry: SiteRegistryService
-    ) {
-    }
+        private readonly siteRegistry: SiteRegistryService,
+    ) {}
 
     @Post(':siteName')
-    async crawlBySite(@Param('siteName') siteName: string) {
-        const site = this.siteRegistry
-                         .getSiteConfigs()
-                         .find((site) => site.siteName.toLowerCase() === siteName.toLowerCase());
-
-        if (!site) {
-            throw new NotFoundException(`${siteName} is not found`);
-        }
-
-        await this.crawlerService.crawlAndStore(site);
-
-        return {
-            success: true
-        }
+    crawlBySite(
+        @Param('siteName') siteName: string,
+    ): Observable<ControllerResponse<{ success: true } | ErrorBody>> {
+        return of(this.siteRegistry.getSiteConfigs()).pipe(
+            map((sites) =>
+                sites.find((site) => site.siteName.toLowerCase() === siteName.toLowerCase()),
+            ),
+            mergeMap((site) =>
+                isNil(site)
+                    ? of(
+                          ControllerResponse.error(
+                              ApplicationError.of(CRAWL_ERROR_CODE.INVALID_SITE, { siteName }),
+                          ),
+                      )
+                    : defer(() =>
+                          from(this.crawlerService.crawlAndStore(site)).pipe(
+                              map(() => ControllerResponse.ok({ success: true } as const)),
+                          ),
+                      ),
+            ),
+        );
     }
 }
